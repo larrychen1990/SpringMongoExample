@@ -59,12 +59,11 @@ public class AnotherAppTest {
 	}
 
 	@Test
-	public void findCustomersUsingQuerydslSort() {
+	public void findCustomersWithQuerySort() {
 		List<Customer> result = repository.findByLastname("Matthews", new Sort(Direction.ASC, "firstname"));
 		assertThat(result, hasSize(2));
 		assertThat(result.get(1), is(oliver));
 		assertThat(result.get(0), is(dave));
-		
 	}
 
 	/**
@@ -73,18 +72,22 @@ public class AnotherAppTest {
 	 */
 	@Test
 	public void exposesGeoSpatialFunctionality() {
+		
 		GeospatialIndex indexDefinition = new GeospatialIndex("address.location");
 		indexDefinition.getIndexOptions().put("min", -180);
 		indexDefinition.getIndexOptions().put("max", 180);
 		operations.indexOps(Customer.class).ensureIndex(indexDefinition);
+		
 		Customer ollie = new Customer("Oliver", "Gierke");
 		ollie.setAddress(new Address(new Point(52.52548, 13.41477)));
 		ollie = repository.save(ollie);
+		
 		Point referenceLocation = new Point(52.51790, 13.41239);
 		Distance oneKilometer = new Distance(1, Metrics.KILOMETERS);
 		GeoResults<Customer> result = repository.findByAddressLocationNear(referenceLocation, oneKilometer);
 		assertThat(result.getContent(), hasSize(1));
 		Distance distanceToFirstStore = result.getContent().get(0).getDistance();
+				
 		assertThat(distanceToFirstStore.getMetric(), is((Metric)Metrics.KILOMETERS));
 		assertThat(distanceToFirstStore.getValue(), closeTo(0.862, 0.001));
 	}

@@ -1,5 +1,6 @@
 package com.colobu.springmongo;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -32,7 +34,18 @@ public class AnotherApp {
 		carter = repository.save(new Customer("Carter", "Beauford"));
 		
 		List<Customer> result = repository.findByLastname("Matthews", new Sort(Direction.ASC, "firstname"));
-		System.out.println(result.size());
+		System.out.println("Find by lastname Matthews: "+result.size());
+		for(Customer customer:result){
+			System.out.println(customer.getFirstname()+" "+customer.getLastname());
+		}
+		System.out.println();
+		
+		List<Customer> resultByFirstname = repository.findByFirstname("Oliver August", new Sort(Direction.ASC, "firstname"));
+		System.out.println("Find by firstname Oliver August: "+resultByFirstname.size());
+		for(Customer customer:resultByFirstname){
+			System.out.println(customer.getFirstname()+" "+customer.getLastname());
+		}
+		System.out.println();
 		
 		GeospatialIndex indexDefinition = new GeospatialIndex("address.location");
 		indexDefinition.getIndexOptions().put("min", -180);
@@ -44,7 +57,17 @@ public class AnotherApp {
 		ollie = repository.save(ollie);
 		Point referenceLocation = new Point(52.51790, 13.41239);
 		Distance oneKilometer = new Distance(1, Metrics.KILOMETERS);
-		GeoResults<Customer> geoResult = repository.findByAddressLocationNear(referenceLocation, oneKilometer);
-		System.out.println(geoResult.getContent().size());
+		GeoResults<Customer> nearResult = repository.findByAddressLocationNear(referenceLocation, oneKilometer);
+		System.out.println("Find "+nearResult.getContent().size()+" by address near : "+referenceLocation.toString());
+		
+		Iterator<GeoResult<Customer>> it = nearResult.iterator();
+		while(it.hasNext()){
+			GeoResult<Customer> res = it.next();
+			Customer content = res.getContent();
+			Distance distance = res.getDistance();
+			System.out.println(content.getFirstname()+" "+content.getLastname()
+					+" at "+content.getAddress().getLocation().toString()+" near "+distance.toString());
+		}
+		
 	}
 }

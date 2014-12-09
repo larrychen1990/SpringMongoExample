@@ -1,8 +1,9 @@
 package com.colobu.springmongo.entity;
 
+import static org.springframework.util.Assert.hasText;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.Assert;
 
 @Document
 public class Customer {
@@ -19,8 +20,8 @@ public class Customer {
 	 *            must not be {@literal null} or empty.
 	 */
 	public Customer(String firstname, String lastname) {
-		Assert.hasText(firstname, "Firstname must not be null or empty!");
-		Assert.hasText(lastname, "Lastname must not be null or empty!");
+		hasText(firstname, "Firstname must not be null or empty!");
+		hasText(lastname, "Lastname must not be null or empty!");
 		this.firstname = firstname;
 		this.lastname = lastname;
 	}
@@ -70,12 +71,13 @@ public class Customer {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (obj == null)return false;
+		if (obj== this)return true;
+		if (getClass() != obj.getClass())return false;
+		
+		//don't use instaceof because if the Customer has subclass it doesn't works
+//		if (!(obj instanceof Customer))return false;
+		
 		Customer other = (Customer) obj;
 		if (address == null) {
 			if (other.address != null)

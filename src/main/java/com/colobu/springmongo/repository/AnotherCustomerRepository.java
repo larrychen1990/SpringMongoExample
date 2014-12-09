@@ -38,6 +38,11 @@ public class AnotherCustomerRepository {
 		Criteria criteria = new Criteria("lastname").is(lastname);
 		return mongoTemplate.find(new Query(criteria), Customer.class);
 	}
+	
+	public List<Customer> findByFirstname(String firstname, Sort sort){
+		Criteria criteria = new Criteria("firstname").is(firstname);
+		return mongoTemplate.find(new Query(criteria), Customer.class);
+	}
 
 	public GeoResults<Customer> findByAddressLocationNear(Point point, Distance distance){
 		return mongoTemplate.geoNear(NearQuery.near(point).maxDistance(distance), Customer.class);
