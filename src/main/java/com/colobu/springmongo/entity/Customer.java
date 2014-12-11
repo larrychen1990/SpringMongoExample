@@ -71,9 +71,8 @@ public class Customer {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)return false;
-		if (obj== this)return true;
-		if (getClass() != obj.getClass())return false;
+		
+		if (obj == null||!obj.getClass().equals(this.getClass()))return false;
 		
 		//don't use instaceof because if the Customer has subclass it doesn't works
 //		if (!(obj instanceof Customer))return false;
@@ -84,21 +83,25 @@ public class Customer {
 				return false;
 		} else if (!address.equals(other.address))
 			return false;
+		
 		if (firstname == null) {
 			if (other.firstname != null)
 				return false;
 		} else if (!firstname.equals(other.firstname))
 			return false;
+		
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		
 		if (lastname == null) {
 			if (other.lastname != null)
 				return false;
 		} else if (!lastname.equals(other.lastname))
 			return false;
+		
 		return true;
 	}
 	
